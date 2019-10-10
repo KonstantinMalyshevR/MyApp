@@ -9,15 +9,15 @@
 import UIKit
 
 class DetailViewController: UIViewController {
+    var news: NewsObject?
 
-    var textView = UITextView()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.title = "Pfd"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = news?.title
         view.backgroundColor = .white
+
+        var textView = UITextView()
         view.addSubview(textView)
         
         textView.backgroundColor = .clear
@@ -26,10 +26,11 @@ class DetailViewController: UIViewController {
         textView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8).isActive = true
         textView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8).isActive = true
         textView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8).isActive = true
-        
+
+        textView.textAlignment = .justified
         textView.textColor = .black
         textView.font = .systemFont(ofSize: 18)
-        textView.text = "ewefwfwefwe"
+        textView.text = news?.detail
     }
     
 }

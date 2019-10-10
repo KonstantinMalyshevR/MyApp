@@ -10,14 +10,13 @@ import UIKit
 
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    var newsTableView: UITableView = UITableView()
-    var myFeed : [NewsObject] = []
+    private var newsTableView: UITableView = UITableView()
+    private var newsArray : [NewsObject] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.title = "Яндекс.Новости Наука"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = "Lenta.ru Новости"
         view.backgroundColor = .white
         view.addSubview(newsTableView)
     
@@ -42,19 +41,19 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func loadRss(_ data: URL) {
         let myParser : XMLParserManager = XMLParserManager().initWithURL(data) as! XMLParserManager
-        myFeed = myParser.getNews()
+        newsArray = myParser.getNews()
         newsTableView.reloadData()
     }
 
     //MARK: - TableView
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return myFeed.count
+        return newsArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.backgroundColor = UIColor.clear
-        cell.textLabel?.text = myFeed[indexPath.row].title
+        cell.textLabel?.text = newsArray[indexPath.row].title
         cell.textLabel?.textColor = UIColor.black
         cell.textLabel?.font = .systemFont(ofSize: 18)
         cell.textLabel?.numberOfLines = 0
@@ -64,8 +63,10 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        navigationController?.pushViewController(DetailViewController(), animated: true)
+
+        let vc = DetailViewController()
+        vc.news = newsArray[indexPath.row]
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
