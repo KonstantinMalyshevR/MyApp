@@ -14,45 +14,30 @@ struct NewsObject {
 }
 
 class XMLParserManager:  NSObject, XMLParserDelegate {
-    private var parser = XMLParser()
+    var parser = XMLParser()
     private var news = [NewsObject]()
     private var newsObject = NewsObject()
-    var controllerDelegate: MainViewControllerProtocol?
-
     private var element = NSString()
     private var ftitle = ""
     private var fdescription = ""
 
-    func startRequest(_ url :URL){
-        let session = URLSession.shared
-        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy)
-        request.httpMethod = "GET"
-        session.dataTask(with: request)
-        let task = session.dataTask(with: url) { data, response, error in
-            do {
-                if let data = data {
-                    self.startParse(data)
-                }
-            } catch {
-                print("JSON error: \(error.localizedDescription)")
-            }
-        }
-        task.resume()
+    func initWithURL(_ url :URL) -> AnyObject {
+        startParse(url)
+        return self
     }
 
-    private func startParse(_ data: Data) {
+    private func startParse(_ url: URL) {
         news = []
-        parser = XMLParser(data: data)
+        parser = XMLParser(contentsOf: url)!
         parser.delegate = self
+        parser.shouldProcessNamespaces = false
+        parser.shouldReportNamespacePrefixes = false
+        parser.shouldResolveExternalEntities = false
         parser.parse()
     }
-    
+
     func getNews() -> [NewsObject] {
         return news
-    }
-
-    func parserDidEndDocument(_ parser: XMLParser) {
-        controllerDelegate?.refreshTable()
     }
 
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {

@@ -8,11 +8,7 @@
 
 import UIKit
 
-protocol MainViewControllerProtocol {
-    func refreshTable()
-}
-
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MainViewControllerProtocol {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private var newsTableView: UITableView = UITableView()
     private var newsArray: [NewsObject] = []
@@ -20,36 +16,29 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         navigationItem.title = "Lenta.ru Новости"
         view.backgroundColor = .white
         view.addSubview(newsTableView)
-    
+
         newsTableView.delegate = self
         newsTableView.dataSource = self
         newsTableView.backgroundColor = .clear
         newsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
+
         newsTableView.translatesAutoresizingMaskIntoConstraints = false
         newsTableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 8).isActive = true
         newsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8).isActive = true
         newsTableView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8).isActive = true
         newsTableView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8).isActive = true
-        
+
         loadData()
     }
 
     func loadData() {
         let url = URL(string: "https://lenta.ru/rss/news")!
-        myParser = XMLParserManager()
-        myParser?.controllerDelegate = self
-        myParser?.startRequest(url)
-    }
-
-    func refreshTable() {
-        if let parser = myParser {
-            newsArray = parser.getNews()
-        }
+        let myParser: XMLParserManager = XMLParserManager().initWithURL(url) as! XMLParserManager
+        newsArray = myParser.getNews()
         newsTableView.reloadData()
     }
 
@@ -57,7 +46,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return newsArray.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.backgroundColor = UIColor.clear
@@ -68,7 +57,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         cell.textLabel?.lineBreakMode = .byWordWrapping
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
