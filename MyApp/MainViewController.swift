@@ -8,11 +8,16 @@
 
 import UIKit
 
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+protocol MainViewControllerProtocol {
+    func refreshTable()
+}
+
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MainViewControllerProtocol {
 
     private var newsTableView: UITableView = UITableView()
-    private var newsArray : [NewsObject] = []
-    
+    private var newsArray: [NewsObject] = []
+    private var myParser: XMLParserManager?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,15 +38,18 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         loadData()
     }
-    
+
     func loadData() {
         let url = URL(string: "https://lenta.ru/rss/news")!
-        loadRss(url);
+        myParser = XMLParserManager()
+        myParser?.controllerDelegate = self
+        myParser?.startRequest(url)
     }
-    
-    func loadRss(_ data: URL) {
-        let myParser : XMLParserManager = XMLParserManager().initWithURL(data) as! XMLParserManager
-        newsArray = myParser.getNews()
+
+    func refreshTable() {
+        if let parser = myParser {
+            newsArray = parser.getNews()
+        }
         newsTableView.reloadData()
     }
 

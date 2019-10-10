@@ -17,30 +17,44 @@ class XMLParserManager:  NSObject, XMLParserDelegate {
     private var parser = XMLParser()
     private var news = [NewsObject]()
     private var newsObject = NewsObject()
+    var controllerDelegate: MainViewControllerProtocol?
 
     private var element = NSString()
     private var ftitle = ""
     private var fdescription = ""
 
-    func initWithURL(_ url :URL) -> AnyObject {
-        startParse(url)
-        return self
+    func startRequest(_ url :URL){
+        let session = URLSession.shared
+        var request = URLRequest(url: url, cachePolicy: .useProtocolCachePolicy)
+        request.httpMethod = "GET"
+        session.dataTask(with: request)
+        let task = session.dataTask(with: url) { data, response, error in
+            do {
+                if let data = data {
+                    self.startParse(data)
+                }
+            } catch {
+                print("JSON error: \(error.localizedDescription)")
+            }
+        }
+        task.resume()
     }
-    
-    private func startParse(_ url :URL) {
+
+    private func startParse(_ data: Data) {
         news = []
-        parser = XMLParser(contentsOf: url)!
+        parser = XMLParser(data: data)
         parser.delegate = self
-        parser.shouldProcessNamespaces = false
-        parser.shouldReportNamespacePrefixes = false
-        parser.shouldResolveExternalEntities = false
         parser.parse()
     }
     
     func getNews() -> [NewsObject] {
         return news
     }
-    
+
+    func parserDidEndDocument(_ parser: XMLParser) {
+        controllerDelegate?.refreshTable()
+    }
+
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         element = elementName as NSString
         if (element as NSString).isEqual(to: "item") {
