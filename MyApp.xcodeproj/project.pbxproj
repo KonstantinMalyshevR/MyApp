@@ -86,18 +86,18 @@
 			isa = PBXGroup;
 			children = (
 				72A309F7D4917FC8DE88876B /* SharedPreferencesService.swift */,
-				72A300DB9B4EBF403BC38224 /* Network */,
+				72A300DB9B4EBF403BC38224 /* Data */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		72A300DB9B4EBF403BC38224 /* Network */ = {
+		72A300DB9B4EBF403BC38224 /* Data */ = {
 			isa = PBXGroup;
 			children = (
 				72A307D8C8CBCA378EFD30A2 /* DataService.swift */,
 				72A30983C15B43E63408F19D /* XMLParserManager.swift */,
 			);
-			path = Network;
+			path = Data;
 			sourceTree = "<group>";
 		};
 		72A30EFC679A832B5FAC61E6 /* Models */ = {
