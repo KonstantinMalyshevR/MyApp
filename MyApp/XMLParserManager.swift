@@ -8,11 +8,6 @@
 
 import Foundation
 
-struct NewsObject {
-    var title = ""
-    var detail = ""
-}
-
 class XMLParserManager:  NSObject, XMLParserDelegate {
     var parser = XMLParser()
     private var news = [NewsObject]()
