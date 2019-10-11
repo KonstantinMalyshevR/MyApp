@@ -10,6 +10,7 @@ import UIKit
 
 class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    private let detailViewController = DetailViewController()
     private var newsTableView: UITableView = UITableView()
     private var newsArray: [NewsObject] = []
     private var myParser: XMLParserManager?
@@ -39,7 +40,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let url = URL(string: "https://lenta.ru/rss/news")!
         let myParser: XMLParserManager = XMLParserManager().initWithURL(url) as! XMLParserManager
         newsArray = myParser.getNews()
-        SharedPreferencesService.saveNews(entity: newsArray)
+        if newsArray.count > 0 {
+            SharedPreferencesService.saveNews(entity: newsArray)
+        } else {
+            if let savedNews = SharedPreferencesService.loadNews() {
+                newsArray = savedNews
+            }
+        }
         newsTableView.reloadData()
     }
 
@@ -62,11 +69,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        var sdf = SharedPreferencesService.loadNews()
-
-        let vc = DetailViewController()
-        vc.news = newsArray[indexPath.row]
-        navigationController?.pushViewController(vc, animated: true)
+        detailViewController.news = newsArray[indexPath.row]
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
 
