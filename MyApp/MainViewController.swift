@@ -14,9 +14,12 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private var newsTableView: UITableView = UITableView()
     private var newsArray: [NewsObject] = []
     private var myParser: XMLParserManager?
+    private var dataService: DataService?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        dataService = DataService()
 
         navigationItem.title = "Lenta.ru Новости"
         view.backgroundColor = .white
@@ -37,15 +40,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func loadData() {
-        let url = URL(string: "https://lenta.ru/rss/news")!
-        let myParser: XMLParserManager = XMLParserManager().initWithURL(url) as! XMLParserManager
-        newsArray = myParser.getNews()
-        if newsArray.count > 0 {
-            SharedPreferencesService.saveNews(entity: newsArray)
-        } else {
-            if let savedNews = SharedPreferencesService.loadNews() {
-                newsArray = savedNews
-            }
+        if let data = dataService?.getData() {
+            newsArray = data
         }
         newsTableView.reloadData()
     }

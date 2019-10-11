@@ -9,7 +9,7 @@
 import Foundation
 
 class XMLParserManager:  NSObject, XMLParserDelegate {
-    var parser = XMLParser()
+    private var parser = XMLParser()
     private var news = [NewsObject]()
     private var newsObject = NewsObject()
     private var element = NSString()
